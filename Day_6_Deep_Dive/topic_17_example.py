@@ -1,34 +1,56 @@
-# topic_17_example.py
-# Understanding Correlation Matrices and Regression foundations in Pandas.
-
 import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, r2_score
 
-print("--- 1. Creating an Analytical Dataset ---")
-# Let's create a dataset showing the relationship between Advertising Spend,
-# the Price of the product, and the final Sales numbers.
-business_data = {
-    "Ad_Spend": [1000, 2000, 3000, 4000, 5000],
-    "Price": [50, 50, 48, 48, 45], # The product price is dropping slightly
-    "Sales": [150, 300, 450, 600, 750]
-}
+np.random.seed(42)
 
-df = pd.DataFrame(business_data)
-print("Business Dataset:\n", df)
+# Generate some synthetic business data
+ad_spend = np.random.uniform(1000, 10000, 200)
+store_traffic = ad_spend * np.random.uniform(0.5, 1.5, 200) + np.random.normal(0, 500, 200)
+sales = (ad_spend * 2.5) + (store_traffic * 1.2) + np.random.normal(5000, 2000, 200)
+competitor_price = np.random.uniform(10, 50, 200) 
 
-print("\n--- 2. The Correlation Matrix ---")
-# .corr() mathematically calculates relationships between -1.0 and 1.0 for the whole table
-correlation_matrix = df.corr()
-print("Correlation Matrix:\n", correlation_matrix)
+# Combine into a single dataset
+df = pd.DataFrame({
+    'Ad_Spend': ad_spend,
+    'Store_Traffic': store_traffic,
+    'Competitor_Price': competitor_price,
+    'Total_Sales': sales
+})
 
-print("\n--- 3. Analyzing the Results ---")
-print("Notice how 'Ad_Spend' and 'Sales' have a perfect 1.0 score.")
-print("This proves a 100% Positive Correlation: More Ads = More Sales!")
+# 1. Statistical check for relationships
+print("--- Correlation Matrix ---")
+corr_matrix = df.corr()
+print(corr_matrix)
 
-print("\nNotice how 'Price' and 'Sales' have a negative score (around -0.9).")
-print("This proves a Negative Correlation: Lower Price = More Sales!")
+# 2. Setup Machine Learning Variables
+X = df[['Ad_Spend', 'Store_Traffic']] # Features (inputs)
+y = df['Total_Sales']                 # Target (output)
 
-print("\n--- 4. Regression Theory (Prediction Concept) ---")
-# If we were to apply a Machine Learning Regression Model to this exact data,
-# the computer would do the math and realize that every $1,000 in Ad_Spend generates exactly 150 Sales.
-# The ML Model would then confidently predict that $6,000 in Ad_Spend would generate 900 Sales!
-# We will actually build this model using Python in the upcoming final days!
+# 3. Hide 20% of the data for testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 4. Train the Model (Find the line of best fit)
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# 5. Predict on hidden test data
+predictions = model.predict(X_test)
+
+# 6. Evaluate accuracy
+print("\n--- Model Evaluation ---")
+mae = mean_absolute_error(y_test, predictions)
+r2 = r2_score(y_test, predictions)
+
+print(f"Mean Absolute Error (MAE): {mae:.2f}")
+print(f"R-squared (R2): {r2:.2f}")
+
+# 7. Analyze the math behind the predictions
+print("\n--- Model Coefficients ---")
+print(f"Intercept (Base Sales): {model.intercept_:.2f}")
+print(f"Ad Spend Multiplier: {model.coef_[0]:.2f}")
+print(f"Store Traffic Multiplier: {model.coef_[1]:.2f}")

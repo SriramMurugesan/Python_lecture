@@ -1,47 +1,62 @@
-# topic_16_example.py
-# Advanced Exceptions: Multiple Excepts, Finally, and Custom Classes.
+class InsufficientFundsError(Exception):
+    pass
 
-print("--- 1. Multiple Except Blocks ---")
-# Imagine getting input from a user on a website
-user_input = "0"
+class InvalidCurrencyError(Exception):
+    pass
 
-try:
-    print("Trying to convert input to a number and divide 100 by it...")
-    # This might fail if user_input is a text word!
-    number = int(user_input)
-    
-    # This might fail if the user_input is exactly 0!
-    result = 100 / number
-    print("Result is:", result)
 
-except ValueError:
-    print("ERROR CAUGHT: You must type a valid number, not text!")
-except ZeroDivisionError:
-    print("ERROR CAUGHT: You cannot mathematically divide by zero!")
+def process_withdrawal(balance, amount, currency):
+    if type(amount) is not int and type(amount) is not float:
+        raise TypeError("Amount must be a number.")
+        
+    if amount < 0:
+        raise ValueError("Cannot withdraw a negative amount.")
 
-print("\n--- 2. The 'finally' Block ---")
-try:
-    print("Opening a highly secure database...")
-    # Simulating a massive crash reading the file
-    crash = 1 / 0
-except ZeroDivisionError:
-    print("ERROR: Something went horribly wrong while reading the data!")
-finally:
-    # This runs no matter what happens!
-    print("FINALLY: Forcefully closing the secure connection to prevent data leaks.")
+    if currency != "USD":
+        raise InvalidCurrencyError(f"Currency '{currency}' is not supported. Use USD.")
 
-print("\n--- 3. Custom Error Classes ---")
-# Creating a brand new custom error specifically for our banking program
-class BankBalanceError(Exception):
-    pass # 'pass' just tells Python "do nothing else, the setup is complete"
+    if amount > balance:
+        raise InsufficientFundsError(f"Cannot withdraw {amount}. Current balance is {balance}.")
 
-account_balance = 50
-withdrawal_amount = 100
+    new_balance = balance - amount
+    return new_balance
 
-print(f"Attempting to withdraw ${withdrawal_amount} from an account with ${account_balance}...")
 
-# If you remove the hashtags below, it will raise OUR custom error!
-# if withdrawal_amount > account_balance:
-#     raise BankBalanceError("CRITICAL: You do not have enough money in your account!")
+def simulate_atm_transaction(user_balance, user_input_amount, user_input_currency):
+    try:
+        amount_to_withdraw = float(user_input_amount)
+        print(f"Attempting to withdraw {amount_to_withdraw} {user_input_currency}...")
+        
+        final_balance = process_withdrawal(user_balance, amount_to_withdraw, user_input_currency)
+        
+    except ValueError as e:
+        print(f"Data Error: {e}")
+        
+    except TypeError as e:
+        print(f"Type Error: {e}")
+        
+    except InvalidCurrencyError as e:
+        print(f"Currency System Error: {e}")
+        
+    except InsufficientFundsError as e:
+        print(f"Transaction Declined: {e}")
+        
+    except Exception as e:
+        print(f"An unexpected critical system error occurred: {e}")
+        
+    else:
+        print(f"Success! Please take your cash. Your new balance is {final_balance}.")
+        
+    finally:
+        print("Closing secure connection to bank server.\n")
 
-print("Withdrawal successful!")
+
+simulate_atm_transaction(500, 100, "USD")
+
+simulate_atm_transaction(500, 600, "USD")
+
+simulate_atm_transaction(500, -50, "USD")
+
+simulate_atm_transaction(500, 100, "EUR")
+
+simulate_atm_transaction(500, "one hundred", "USD")

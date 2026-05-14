@@ -1,28 +1,58 @@
-# Topic 12: Grouping & Aggregating
+# Topic 12: Grouping & Aggregating Data (2-Hour Lab)
 
-## What is Grouping?
-Grouping data in Pandas is the exact equivalent of creating a Pivot Table in Excel. It allows you to group identical categories together and calculate math on them instantly (like finding the total sales per region, or average age per city).
+Now that our data is clean, it's time to find insights. The IBM certification expects you to be able to answer business questions using the **Split-Apply-Combine** methodology. In this 2-hour lab, we will break down our dataset by Class and Subject to find the hidden patterns.
 
-## The groupby() Method
-The `groupby(column_name)` method splits your entire table into distinct, isolated groups based on a specific column.
-- Example: `df.groupby("Department")` will group all the Sales people together, all the IT people together, etc.
+---
 
-## Aggregation Functions
-Once you group your data, you must tell Pandas what math to do with the groups. These math actions are called aggregations:
-- `sum()`: Adds all the numbers up.
-- `mean()`: Calculates the average.
-- `count()`: Counts how many rows exist in that specific group.
-- `max()` / `min()`: Finds the highest or lowest value in that group.
+## Part 1: The `groupby` Engine (Split)
 
-Example: `df.groupby("Department")["Salary"].mean()` calculates the average salary per department.
+The `groupby()` function is the most powerful tool in Pandas for data analysis. It allows you to group rows that share the same value in a specific column.
 
-## Multiple Aggregations with agg()
-If you want to calculate the sum AND the average at the exact same time, you use the `.agg()` method and pass it a list of strings representing the math you want.
-- Example: `df.groupby("Department")["Salary"].agg(["sum", "mean"])`
+### Single Grouping
+If we want to know the average score per Subject, we split the data by 'Subject':
+`df.groupby('Subject')`
+*Note:* If you run just this, Pandas returns a `<DataFrameGroupBy object>`. It has split the data into invisible buckets, but it's waiting for you to tell it what math to perform!
 
-## The apply() Method
-The `apply()` method allows you to run a built-in Python function across an entire column instantly, without writing a loop. 
-For example, using `apply(len)` on a text column will instantly calculate the character length of every single row in that column.
+### Applying the Math
+To see the results, attach a mathematical function:
+`df.groupby('Subject')['Score'].mean()`
+This says: Group by Subject, look ONLY at the Score column, and calculate the average.
 
-## Describing Data (Grouped)
-Just like you can `describe()` a whole DataFrame, you can `describe()` a grouped object to get a massive, instant mathematical summary of every single group individually!
+### Multi-Index Grouping
+IBM exams frequently ask you to group by *multiple* columns. Pass them as a list!
+`df.groupby(['Class', 'Subject'])['Score'].mean()`
+This will show you the average Math score for 10A, the average Math score for 10B, etc.
+
+---
+
+## Part 2: Advanced Aggregation (`.agg`)
+
+Sometimes you want more than just the mean. You might want the highest score, the lowest score, and the average score all at the same time.
+
+### The `.agg()` Method
+Instead of `.mean()`, we use `.agg()` and pass a list of the statistical functions we want.
+`df.groupby('Subject')['Score'].agg(['mean', 'max', 'min'])`
+This produces a beautiful summary table showing all three statistics side-by-side for each subject.
+
+---
+
+## Part 3: The `.apply()` Method (Custom Logic)
+
+While Pandas has built-in math functions, sometimes you need to apply custom business logic.
+
+### Creating a Custom Function
+Let's say the school has a strict grading curve. We write a standard Python function:
+```python
+def assign_grade(score):
+    if score >= 90: return 'A'
+    elif score >= 80: return 'B'
+    else: return 'C'
+```
+
+### Applying it to the DataFrame
+We can force Pandas to run every single row of the 'Score' column through our custom function using `.apply()`:
+`df['Letter_Grade'] = df['Score'].apply(assign_grade)`
+
+### Lambda Functions (IBM Favorite)
+For very simple logic, IBM expects you to use anonymous `lambda` functions inside `.apply()` to save space.
+`df['Passed_With_Honors'] = df['Score'].apply(lambda x: True if x >= 90 else False)`

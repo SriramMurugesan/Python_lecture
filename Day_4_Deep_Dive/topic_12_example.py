@@ -1,41 +1,34 @@
-# topic_12_example.py
-# Grouping, Aggregating, and Applying functions to data.
-
 import pandas as pd
 
-# Creating a Sales DataFrame
-sales_data = {
-    "Region": ["North", "South", "North", "East", "South", "East"],
-    "Product": ["Laptops", "Phones", "Phones", "Laptops", "Laptops", "Phones"],
-    "Revenue": [10000, 5000, 7000, 12000, 8000, 6000]
-}
-df = pd.DataFrame(sales_data)
+df = pd.read_csv('student_marks.csv')
+df['Score'] = df['Score'].fillna(df['Score'].mean())
 
-print("--- Original Sales DataFrame ---")
-print(df)
+print("--- Single Grouping ---")
+subject_avg = df.groupby('Subject')['Score'].mean()
+print(subject_avg)
 
-print("\n--- 1. Grouping and Aggregating (Sum) ---")
-# Group by Region, look at Revenue, and Sum it up
-regional_revenue = df.groupby("Region")["Revenue"].sum()
-print("Total Revenue by Region:\n", regional_revenue)
+print("\n--- Multi-Index Grouping ---")
+class_subject_avg = df.groupby(['Class', 'Subject'])['Score'].mean()
+print(class_subject_avg)
 
-print("\n--- 2. Grouping and Aggregating (Mean/Average) ---")
-# Group by Product, look at Revenue, and find the Average
-average_product_revenue = df.groupby("Product")["Revenue"].mean()
-print("Average Revenue per Product:\n", average_product_revenue)
+print("\n--- Multiple Aggregations ---")
+stats = df.groupby('Subject')['Score'].agg(['mean', 'max', 'min', 'count'])
+print(stats)
 
-print("\n--- 3. Multiple Aggregations using agg() ---")
-# We want the total sum, the average, and the count all at the same time!
-multi_agg = df.groupby("Region")["Revenue"].agg(["sum", "mean", "count"])
-print("Detailed Revenue Stats per Region:\n", multi_agg)
+print("\n--- Custom Apply Function ---")
+def assign_grade(score):
+    if score >= 90:
+        return 'A'
+    elif score >= 80:
+        return 'B'
+    elif score >= 70:
+        return 'C'
+    else:
+        return 'F'
 
-print("\n--- 4. The apply() Method ---")
-# apply() runs a built-in function on every item in a column automatically
-# Let's find the length (number of letters) of every Region name using the built-in 'len' function
-df["Region_Name_Length"] = df["Region"].apply(len)
+df['Letter_Grade'] = df['Score'].apply(assign_grade)
+print(df[['Name', 'Score', 'Letter_Grade']].head())
 
-print("DataFrame after applying 'len' to the Region column:\n", df)
-
-print("\n--- 5. Describing Grouped Data ---")
-# You can also use describe() on a groupby object for a massive summary of each group!
-print("Full mathematical description grouped by Product:\n", df.groupby("Product")["Revenue"].describe())
+print("\n--- Lambda Function ---")
+df['Honors'] = df['Score'].apply(lambda x: True if x >= 90 else False)
+print(df[['Name', 'Score', 'Honors']].head())
