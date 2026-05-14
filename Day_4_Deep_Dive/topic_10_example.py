@@ -1,6 +1,8 @@
 import pandas as pd
+import os
 
-df = pd.read_csv('student_marks.csv')
+csv_path = os.path.join(os.path.dirname(__file__), 'student_marks.csv')
+df = pd.read_csv(csv_path)
 
 print("--- Head ---")
 print(df.head())
