@@ -21,15 +21,27 @@ df = pd.DataFrame({
     'Competitor_Price': competitor_price,
     'Total_Sales': sales
 })
-
-# 1. Statistical check for relationships
-print("--- Correlation Matrix ---")
+print(df)
 corr_matrix = df.corr()
 print(corr_matrix)
 
 # 2. Setup Machine Learning Variables
 X = df[['Ad_Spend', 'Store_Traffic']] # Features (inputs)
 y = df['Total_Sales']                 # Target (output)
+
+# Visualize the relationship between Ad_Spend and Total_Sales
+plt.scatter(df['Ad_Spend'],df['Total_Sales'])
+plt.xlabel("Ad Spend")
+plt.ylabel("Total Sales")
+plt.title("Ad Spend vs Total Sales")
+plt.show()
+
+# Visualize the relationship between Store_Traffic and Total_Sales
+plt.scatter(df['Store_Traffic'],df['Total_Sales'])
+plt.xlabel("Store Traffic")
+plt.ylabel("Total Sales")
+plt.title("Store Traffic vs Total Sales")
+plt.show()
 
 # 3. Hide 20% of the data for testing
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)

@@ -7,17 +7,17 @@ df = pd.read_csv(csv_path)
 print("--- Head ---")
 print(df.head())
 
-print("\n--- Tail ---")
-print(df.tail(3))
+# print("\n--- Tail ---")
+# print(df.tail(3))
 
-print("\n--- Shape ---")
-print(df.shape)
+# print("\n--- Shape ---")
+# print(df.shape)
 
-print("\n--- Info ---")
-df.info()
+# print("\n--- Info ---")
+# df.info()
 
-print("\n--- Describe ---")
-print(df.describe())
+# print("\n--- Describe ---")
+# print(df.describe())
 
 print("\n--- Series vs DataFrame ---")
 print(type(df))

@@ -1,49 +1,76 @@
-student = {
-    "name": "Sriram",
-    "age": 21,
-    "course": "Data Science"
-}
+import numpy as np
 
-print(student["name"])
-print(student.get("age"))
+# a= np.array([1, 2, 3])
+# b =np.array([4, 5, 6])
 
-student["city"] = "Chennai"
-student["age"] = 22
+# print(a+b)
+# print(a*b)
+# # print(a-b)
+# # print(a/b)
+# # print(a**b)
 
-print(student)
+# a= [1,2,3]
+# b= [4,5,6]
 
-# student.pop("age")
-# student.popitem()
-# del student["name"]
-# student.clear()
-# print(student)
-# print("name" in student)
-# print("age" not in student)
+# print(a+b)
+# print(a*b)
+# print(a-b)
+# print(a/b)
+# print(a**b)
+# a = np.array([1, 2, 3])
+# b = np.array([[1, 2], [3, 4]])
 
-# for key in student:
-#     print(key)
 
-# for value in student.values():
-#     print(value)
+# print(a.ndim)
+# print(a.shape)
+# print(a.size)
+# print(a.dtype)
+# print(b.ndim)
+# print(b.shape)
+# print(b.size)
+# print(b.dtype)
 
-# for key, value in student.items():
-#     print(key, value)
 
-print(student.keys())        # all keys
-print(student.values())      # all values
-print(student.items())       # key-value pairs
+# print(np.zeros((,3)))
+# print(np.ones((2,3)))
+# print(np.arange(0,10,2))
+# print(np.linspace(0,1,5))
+# print(np.eye(3))
 
-print(student.get("name"))   # safe access
+# a=np.array([10,20,30,40,50])
 
-student.update({"age": 25}) # update dictionary
+# print(a[0])
+# print(a[1:3])
 
-print(student.pop("age")) # remove key
-print(student)
-student.popitem() # remove last inserted
-print(student)
-student.clear() # remove all
-print(student)
-student.copy() # shallow copy
-print(student)
+# b = np.array([[1,2,3], [4,5,6], [7,8,9]])
+# print(b[0,1])
+# print(b[:,1])
+# print(b[1,:])
+# b[0,0]=10   
+# print(b)
 
-print(dict.fromkeys(["a", "b"], 0)) # create new dict
+# a=np.array([1,2,3,4,5])
+#[False,False, True,t,t,t]
+# print(a[a>2])
+# a = np.array([1,2,3])
+
+# print(a + 10)      
+# print(a * 2)       
+# print(a ** 2)       
+
+# a = np.array([1,2,3])
+# b = 10
+
+# print(a + b)   # [11,12,13]
+
+a = np.array([[1,2,3],[4,5,6]])
+b = np.array([1,1,1])
+
+print(a + b)
+# print(a.sum())
+# print(a.mean())
+# print(a.max())
+# print(a.min())
+
+# print(a.sum(axis=0))  # column-wise
+# print(a.sum(axis=1))  # row-wise
